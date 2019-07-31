@@ -1,0 +1,6 @@
+.*/
+mds/
+jsons/
+*.key
+*.exe
+gitio
