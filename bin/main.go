@@ -1,6 +1,6 @@
 package main
 
-import "gitio"
+import "github.com/newham/gitio"
 
 func main() {
 	c := gitio.CmdClient{}
