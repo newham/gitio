@@ -41,7 +41,7 @@ func (ia *IoAPI) Add(name string) error {
 }
 
 func Error(code int, b []byte) error {
-	if code > 200 && code < 300 { //ok
+	if code >= 200 && code < 300 { //ok
 		return nil
 	}
 	return errors.New(string(b))
