@@ -42,6 +42,9 @@ func (a Article) HeadKeys() []string {
 		if t.Field(i).Name == "Date" {
 			continue
 		}
+		if t.Field(i).Name == "Layout" {
+			continue
+		}
 		heads = append(heads, t.Field(i).Name)
 	}
 	return heads

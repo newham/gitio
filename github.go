@@ -192,6 +192,17 @@ type Links struct {
 	Html string `json:"html"`
 }
 
+func (a *API) Get(f *File) error {
+	cli := NewHttpClient(map[string]string{"Authorization": fmt.Sprintf("token %s", a.token)}, nil, "")
+	status, b := cli.Get(f.DownloadUrl)
+	if status != http.StatusOK {
+		println(status, string(b))
+		return nil
+	}
+	WriteFile(f.Name, b)
+	return nil
+}
+
 func (a *API) QueryUrl() map[string]string {
 	if a.Temp.UrlMap != nil {
 		return a.Temp.UrlMap
@@ -268,6 +279,7 @@ type Temp struct {
 	UrlMap       map[string]string
 	Owner        Owner
 	Repositories []Repository
+	Posts        []File
 }
 
 var defaultTmpName = Home() + PathSeparator() + ".gitio.tmp"

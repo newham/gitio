@@ -4,3 +4,4 @@ jsons/
 *.key
 *.exe
 gitio
+.DS_Store

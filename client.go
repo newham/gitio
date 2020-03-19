@@ -24,13 +24,14 @@ var cmd = map[string]string{
 		"Usage:\n\n" +
 		"\tgitio <command> [arguments]\n\n" +
 		"The commands are:\n",
-	"create": "create a new template, you can input the title et. of this file",
-	"login":  "sign in your github account by token",
-	"logout": "logout your github account",
-	"list":   "list all of your markdown file in github",
-	"add":    "add local markdown to remote",
-	"delete": "delete remote markdown by sha",
-	"update": "update remote markdown by sha, also check the file named if exist",
+	"new":      "create a new template, you can input the title et. of this file",
+	"login":    "sign in your github account by token",
+	"logout":   "logout your github account",
+	"list":     "list all of your markdown file in github",
+	"add":      "add local markdown to remote",
+	"delete":   "delete remote markdown by [sha]",
+	"update":   "update remote markdown by [sha], also check the file named if exist",
+	"download": "download remote markdown by [sha]",
 }
 
 func (c *CmdClient) Help(key string) {
@@ -54,7 +55,7 @@ func (c *CmdClient) Args() {
 		os.Exit(0)
 	}
 	switch os.Args[1] {
-	case "create":
+	case "new":
 		println("Start to create a new template of markdown file of github.io.\n" +
 			"Please input the content by step")
 		a := NewDefaultArticle()
@@ -102,11 +103,7 @@ func (c *CmdClient) Args() {
 		if api == nil {
 			break
 		}
-		fs := api.List()
-		println("name, sha, size(Byte), type")
-		for _, f := range fs {
-			fmt.Printf("%s, %s, %d, %s\n", f.Name, f.Sha, f.Size, f.Type)
-		}
+		api.PrintList()
 		break
 	case "add":
 		fileName := ""
@@ -193,6 +190,35 @@ func (c *CmdClient) Args() {
 			println("update ", f.Sha, " failed")
 		} else {
 			println("update ", f.Sha, " success")
+		}
+	case "download":
+		sha := ""
+		if len(os.Args) == 3 {
+			sha = os.Args[2]
+		} else {
+			for {
+				println("input file's sha you want to update:\nsha:")
+				sha = ScanLine()
+				if sha != "" {
+					break
+				}
+			}
+		}
+		api := NewIoAPI("")
+		if api == nil {
+			break
+		}
+		f := api.FindFileBySha(sha)
+		if f == nil {
+			println("file's sha ", sha, " not exist")
+			break
+		}
+		//download
+		err := api.Get(f)
+		if err != nil {
+			println("download ", f.Sha, " failed")
+		} else {
+			println("download ", f.Sha, " success")
 		}
 	default:
 		c.Help("help")
